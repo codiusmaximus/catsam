@@ -27,7 +27,7 @@ def makelwgalaxies(snapnow, stardata):
     M_gal = [np.array([i]) for i in np.array([stardata_galaxies['mstar']])]
     age_gal = [np.array([j]) for j in np.array([stardata_galaxies['agestar']])]
     pos_gal = [np.array([k]) for k in np.array([stardata_galaxies['postion']])]
-    #correct this later to xpos,ypos,zpos
+    # correct this later to xpos,ypos,zpos
 
     loopback_snaps = list(reversed(range(minsnap,snapnow-2)))
 
@@ -43,8 +43,8 @@ def makelwgalaxies(snapnow, stardata):
             M_gal[gal_index] = np.append(M_gal[gal_index],stardata_prev_gal['Mstar'][step1_ids])
             age_gal[gal_index] = np.append(age_gal[gal_index],stardata_prev_gal['age'][step1_ids])
 
-            #store the info of these progenitors at snapnow-2 into an array, and we will make the connection for each
-            #of these till we find no descendants
+            # store the info of these progenitors at snapnow-2 into an array, and we will make the connection for each
+            # of these till we find no descendants
 
             buffer_array = stardata_prev_gal[step1_ids]
 
@@ -61,3 +61,5 @@ def makelwgalaxies(snapnow, stardata):
 
                     M_gal[gal_index] = np.append(M_gal[gal_index],buffer_array['Mstar'][step2_ids])
                     age_gal[gal_index] = np.append(age_gal[gal_index],buffer_array['age'][step2_ids])
+
+    return M_gal,age_gal,pos_gal

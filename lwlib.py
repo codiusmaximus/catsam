@@ -1,64 +1,73 @@
-#LW modules go in here
+import numpy as np
+from scipy import integrate
+import ba_constants as bac
 
+def computerates(SED, wvlt, pos, z_current):
+    """
+    code to compute the rates and jlw output from an input SED
+    note that jlwhere is defined at 13.6 eV and in units of 1e-21 erg/s/Hz/sr/cm^2
 
-#this one computes the LW flux in J_21 units, alpha and beta
-def computeLW(input_dist, mass_stellar, age, sk):
+    :param SED: in erg/s/A
+    :param wvlt: in Angstroms
+    :param pos: the r_arr of the [halo - star] to be used for distance
+    :return: kde, kdi, lwoutput
+    """
 
-    #load the SED tables
-    popII_sed_block  = 
-    #all ages loaded in here, extrapolation will happen here
+    wvlt_13 = 911.64 # 13.6 ev
+    wvlt_11 = 1107 # 11.2 ev
+    wvlt_1 = 16313.717 # 0.76 eV
+    kappa_de= 1.1e-10
+    kappa_di= 1.38e-12
 
-    popIII_sed =
-    
-    #initialise the arrays
-    n_points = len(input_dist)
-    alpha = np.ndarray((1,n_points),float)
-    beta = np.ndarray((1,n_points),float)
-    LW_21 = np.ndarray((1,n_points),float)
+    dist = np.sqrt(sum(pos**2))*1e6*bac.pctom*bac.mtocm/(1 + z_current) # physical distance in cm
 
-    for i in range(0, n_points): 
-        alpha[i],beta[i],LW_21[i] = computeparam(SED, wvlt, sk[i])
+    # computing the jlw
 
-    return alpha, beta, LW_21
+    match_13 = min(enumerate(wvlt), key=lambda x: abs(x[1]-wvlt_13))
+    SED_sel_13 = SED[match_13-1 : match_13+1]
+    wvlt_sel_13 = wvlt[match_13-1 : match_13+1]
+    jlw = abs(integrate.simps(SED_sel_13,wvlt_sel_13)) # er
 
-def computeparam(SED, wvlt, param):
-    #CONSTANTS for stuff
-    h_cgs =4.13e-15 # ev s
-    jtoerg = 1e7
-    evtoerg = 1/6.24e11
-    c= 3e8 # m/s
-    h = 6.626e-34 # J s
-    kb = 1.3806e-23 # m^2 kg /s^2/K
-    kb_cgs = 8.61e-5 # cm^2 kg/s^2 /K
-    
-    #define constants etc. here
-    
-    #compute LW here
+    SED_norm = SED/SED[match_13] # SED normalised to it's own value at 13.6 eV in erg/s now
+    freq = np.array([bac.c/(wvlt*1e-10)])
 
-    #compute alpha here
-    
-    #reaction constant
-    k_const = 1.1d-10
+    # computing beta, kdi
 
-    #base wvlt in microns corresponds to 0.76 eV
-    l_o = 1.6419
-    nu_o = c/(1.6419 * 1d-6) # in Hz
+    match_11 = min(enumerate(wvlt), key=lambda x: abs(x[1]-wvlt_11))
+    match_12 = min(enumerate(wvlt), key=lambda x: abs(x[1]-wvlt_13))
 
+    beta = abs(integrate.simps(SED_norm[match_11:match_12],freq[match_11:match_12])/
+               (freq[match_11]-freq[match_12]))/kappa_de
 
-    #checking the xvalues
-    sel_ids = where(xvalues*1d10 >= 911.6 and xvalues*1d6 <= l_o)
-    if sel_ids :
-      print 'check your wavelength array!'
-      
-   xvalues_sel = xvalues[sel_ids]
-   yvalues_sel = yvalues[sel_ids]
+    kdi = kappa_di * beta * jlw/dist**2 * bac.c21
 
-   l = xvalues_sel
-   bufferspec = yvalues_sel
-   freq = c/l #Hz
+    # computing alpha, kde
 
-   #the lyman limit, needed for integration limit and cross section--
-   lylimit = closest(911.6,l*1d10)
+    # cross section for 1eV photons
+    wvlt_cross = 1.6419*1e-6*1e10 # in angstroms
+    # freq_cross = c/(wvlt_cross*1e-10)
+    l_o= 1.6419 # in microns
 
+    wvlt_cross_ids = np.array(np.where((wvlt >= wvlt_13) & (wvlt < wvlt_cross)))
+    count_sel = len(wvlt_cross_ids)
 
-    #compute LW here
+    f_l_john = np.zeros(count_sel)
+    l = wvlt[wvlt_cross_ids]*1e-10 # wvlt in m
+
+    n = np.array([1.,2.,3.,4.,5.,6.])
+    Cn = np.array([152.519, 49.534, -118.858, 92.536 , -34.195, 4.982])
+
+    for li in range(0,count_sel):
+         for ni in range(0,6):
+            f_l_john[li] = f_l_john[li] + (Cn[ni]*(1/(l[li]*1e6) - 1./(l_o))**((n[ni]-1)/2.))
+
+    sigma_pd =  1e-18*(l*1e6)^3 * (1/(l*1e6) - 1/l_o)**1.5 * f_l_john
+
+    yfunc =4*3.14*SED[wvlt_cross_ids]*(wvlt[wvlt_cross_ids]**2 * 1e-10**2/bac.c * 1e10)/(SED[match_13]*wvlt[match_13]**2
+            * 1e-10**2/bac.c *1e10)*1e-21 * sigma_pd/(bac.h*bac.joulestoerg*freq[wvlt_cross_ids])
+
+    alpha = integrate.simps(SED[wvlt_cross_ids],freq[wvlt_cross_ids])/kappa_di
+
+    kde = kappa_de * alpha * jlw/dist**2 * bac.c21
+
+    return kde, kdi, jlw

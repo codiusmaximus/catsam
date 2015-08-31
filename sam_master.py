@@ -2,14 +2,12 @@
 
 # ---initiating block---
 import sam_analysis_simple as sa
-import math
 import numpy as np
 import pandas as pd
 import zlookup as zl
 import lwmodule as lwm
 
 # ---define constants etc.---
-
 
 # ---reading the catalogues created by you---
 input_cat_path = "/bigbang/data/bagarwal/halocatalogues/input/"
