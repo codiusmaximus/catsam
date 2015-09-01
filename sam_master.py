@@ -39,7 +39,7 @@ for snapi in np.arange(min_snap, max_snap):
     output_cat_file_name = output_cat_path + output_cat_file_prefix + snapi_prev
     output_cat_data = pd.read_csv(output_cat_file_name, delim_whitespace=True, names=output_cols)
 
-    star_data = pd.reac_csv()
+    stardata = pd.reac_csv()
 
     z_current = zl.zreturn(snapi)
 
@@ -60,13 +60,13 @@ for snapi in np.arange(min_snap, max_snap):
 
         # make the redshift cut in the star catalogue
         # needs to be done once per snapshot
-        z_cut = lwm.lwlookback(z_current)
-        star_ids_cut = np.where(star_data['z_form'] <= z_cut)
+        # z_cut = lwm.lwlookback(z_current)
+        # star_ids_cut = np.where(star_data['z_form'] <= z_cut)
         # NOTE: IF YOU ARE USING THE LOOPBACK MODULE, DO NOT CUT IT
         # READ IN THE STARS IN THE LWMODULE THEN
 
         # pass the min of these ids to the workers, so incase LW needs to be computed, you can lookup in the star
         # catalogue there and only consider the star_data from the [min:*]
-        haloi_analysed = sa.main_worker(haloi, fields_from_output, star_ids_cut[0])
+        # haloi_analysed = sa.main_worker(haloi, fields_from_output, star_ids_cut[0])
 
         #>>> PRINT this analysed halo into the file

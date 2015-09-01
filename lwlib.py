@@ -3,6 +3,14 @@ from scipy import integrate
 import ba_constants as bac
 import pandas as pd
 
+def lwlookback(z_current):
+    z_lookback = 12.1/11.2*(1 + z_current) - 1
+    return z_lookback
+
+def lwglobal(z):
+    lw_backgorund = 1.6*np.exp(-((z - 10.9)/5.)**2 / 5)
+    return lw_backgorund
+
 def computerates(SED, wvlt, pos, z_current):
     """
     code to compute the rates and jlw output from an input SED

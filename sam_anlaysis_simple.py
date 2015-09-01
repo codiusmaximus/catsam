@@ -16,30 +16,39 @@ depending on the key, the actual sub-method gets called
 """
 
 # import
-import lwmodule as lwm
+import makelwgalaxy as makelw
+import lwlib
+import zlookup
+import popiiimodule as popiii
 
 def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvir, rvir, rs, vrms, mmp,
                 scale_of_last_MM, vmax, posx, posy, posz, spin, mvir_prog, key, bh_switch, coldgas, hotgas, blowout,
-                mstar, min_star_cut_id)
+                mstar, min_star_cut_id, stardata):
+
+    z_current = zlookup.zreturn(snapshot)
 
 #---# case empty
     if key == 0 :
 
-        # need to make a list of active stars here based on cell_info, t_form and t_death (or t_contrib)
-        # make the coord cut here, you have the min_star_cut_id, make the r_arr here
+        # LW to be computed here
+        # Way it is done now is to lookback one snapshot, then find galaxies with stars in them, track them to rhe start
+        # and make arrays of star mass and ages for that 'one' position at the last snapshot. Thus you create an SED
+        # accordingly and then compute ht ekde/kdi/Jlw
 
+        gal_mass, gal_age, pos_gal  = makelw.lwgal(snapshot, stardata)
+        kde , kdi , jlw = lwlib.sedcompute(gal_mass,gal_age,pos_gal)
 
+        jlw_global = lwlib.lwglobal(z_current)
+        # Global J is computed as a fit
 
-        #step1: compute the local LW radiation
-        local_LW = computelocal_LW(snapshot, posx, posy, posz)
-        total_LW = local_LW + global_LW
+        total_lw = jlw + jlw_global
 
         #step2: Pop III or no Pop III
-        make_PopIII = checkpopiii(total_LW, mvir)
+        make_PopIII = popiii.checkpopiii_lw(mvir, total_lw)
 
         #step3: pass final output
-        if ifpopiii == 'yes':
-            smass_iii = random_popiii_mass()
+        if make_PopIII == 'yes':
+            smass_iii = popiii.makepopiii()
             key_update = 3
 
 
