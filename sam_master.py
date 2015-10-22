@@ -43,12 +43,10 @@ fields_from_output = [0., 0., 0., 0., 0., 0., 0.]
 
 for ini_index, halo_first in first_data.iterrows():
 
-    sa.mainworker(halo_first,fields_from_output,0.)
+    o_key , o_bh_swtich, o_coldgas, o_hotgas, o_blowout, o_mstar = sa.mainworker(halo_first,fields_from_output,0.)
 
-first_out = output_cat_path + output_cat_file_prefix + min_snap
-# open a file with the first_out
-
-
+    first_out = output_cat_path + output_cat_file_prefix + min_snap
+    # open a file with the first_out
 
 
 for snapi in np.arange(min_snap + 1, max_snap):

@@ -24,11 +24,15 @@ import popiiimodule as popiii
 #number of popiii stars populated in minihaloes
 niii = 1
 
+#initialise the bh_switch
+bh_switch = 0
+
 def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvir, rvir, rs, vrms, mmp,
                 scale_of_last_MM, vmax, posx, posy, posz, spin, mvir_prog, key, bh_switch, coldgas, hotgas, blowout,
                 mstar, stardata):
 
     z_current = zlookup.zreturn(snapshot)
+    key_update = key
 
 #---# case empty
     if key == 0 :
@@ -53,11 +57,14 @@ def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvi
             #step3: pass final output
             if make_PopIII == 'yes':
                 smass_iii = popiii.makepopiii(niii)
+                mstar = smass_iii
                 # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
                 key_update = 3
 
         if stardata =0:
             smass_iii = popiii.makepopiii(niii)
+            key_update = 3
+            mstar = smass_iii
 
 #---# case DCBH
     elif key == 1 :
@@ -71,11 +78,13 @@ def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvi
     elif key == 2 :
         popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
+        key_update = 2
 
 #---# case Pop III formed here at some point , make Pop II now
     elif key == 3 :
         popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
+        key_update = 2
 
-
-    #Add the writing part here to the output file
+    #return the output fields
+    return key_update, bh_switch, coldgas, hotgas, blowout, mstar
