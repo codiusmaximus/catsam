@@ -21,14 +21,14 @@ import lwlib
 import zlookup
 import popiiimodule as popiii
 
-def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvir, rvir, rs, vrms, mmp,
-                scale_of_last_MM, vmax, posx, posy, posz, spin, mvir_prog, key, bh_switch, coldgas, hotgas, blowout,
-                mstar, min_star_cut_id, stardata):
+#def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvir, rvir, rs, vrms, mmp,
+#                scale_of_last_MM, vmax, posx, posy, posz, spin, mvir_prog, key, bh_switch, coldgas, hotgas, blowout,
+#                mstar, min_star_cut_id, stardata):
 
-    z_current = zlookup.zreturn(snapshot)
-
+def main_worker(haloi,ffo, stardata,snapshot):
+    z_current = htils.get_z_snap(hpath,snapshot)[0]
 #---# case empty
-    if key == 0 :
+    if ffo['key'] == 0 :
 
         # LW to be computed here
         # Way it is done now is to lookback one snapshot, then find galaxies with stars in them, track them to rhe start
@@ -54,7 +54,7 @@ def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvi
 
 
 #---# case DCBH
-    elif key == 1 :
+    elif ffo['key'] == 1 :
 
         #do nothing here
         bh_switch = 1
@@ -62,13 +62,13 @@ def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvi
 #---# case Pop II stars already exist
     # here is where the prog_info comes in handy
 
-    elif star_key == 2 :
+    elif ffo['key'] == 2 :
         popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
 
 #---# case Pop III formed here at some point , make Pop II now
-    elif star_key == 3 :
-        popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
+    elif ffo['key'] == 3 :
+        popiii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
 
 
