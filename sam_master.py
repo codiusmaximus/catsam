@@ -28,7 +28,6 @@ min_snap = 3
 max_snap = 97
 
 
-
 input_cols = ['snapshot', 'tree_id', 'id', 'pid', 'origid', 'desc_id', 'scale', 'phantom', 'mvir', 'rvir', 'rs', 'vrms',
               'mmp', 'scale_of_last_MM', 'vmax', 'posx', 'posy', 'posz', 'spin']
 
@@ -36,7 +35,23 @@ output_cols = ['snapshot','tree_id', 'id', 'pid', 'origid', 'desc_id', 'scale', 
                'mmp','scale_of_last_MM','vmax','posx', 'posy', 'posz', 'spin', 'key', 'bh_switch', 'Jiii', 'Jii', 'Jbg',
                'coldgas', 'hotgas', 'blowout', 'mstar']
 
-for snapi in np.arange(min_snap, max_snap):
+
+# ---- inital output for min_snap -----
+first_in = input_cat_path + input_cat_file_prefix + min_snap
+first_data = pd.read_csv(input_file_name, delim_whitespace=True, names=input_cols)
+fields_from_output = [0., 0., 0., 0., 0., 0., 0.]
+
+for ini_index, halo_first in first_data.iterrows():
+
+    sa.mainworker(halo_first,fields_from_output,0.)
+
+first_out = output_cat_path + output_cat_file_prefix + min_snap
+# open a file with the first_out
+
+
+
+
+for snapi in np.arange(min_snap + 1, max_snap):
 
     input_file_name = input_cat_path + input_cat_file_prefix + snapi
     input_data = pd.read_csv(input_file_name, delim_whitespace=True, names=input_cols)
@@ -63,7 +78,7 @@ for snapi in np.arange(min_snap, max_snap):
                                   sum(output_cat_data['hotgas'][match_id]),sum(output_cat_data['blowout'][match_id]),
                                   sum(output_cat_data['mstar'][match_id])]
         else:
-            fields_from_output = [0., 0., 0., 0., 0., 0.]
+            fields_from_output = [0., 0., 0., 0., 0., 0., 0.]
 
         # make the redshift cut in the star catalogue
         # needs to be done once per snapshot
@@ -76,5 +91,5 @@ for snapi in np.arange(min_snap, max_snap):
         # catalogue there and only consider the star_data from the [min:*]
         # haloi_analysed = sa.main_worker(haloi, fields_from_output, star_ids_cut[0])
 
-        haloi_analysed = sa.mainworker(haloi+fields_from_output, stardata)
+        haloi_analysed = sa.mainworker(haloi,fields_from_output, stardata)
         #>>> PRINT this analysed halo into the file

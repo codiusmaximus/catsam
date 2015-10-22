@@ -21,37 +21,43 @@ import lwlib
 import zlookup
 import popiiimodule as popiii
 
+#number of popiii stars populated in minihaloes
+niii = 1
+
 def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvir, rvir, rs, vrms, mmp,
                 scale_of_last_MM, vmax, posx, posy, posz, spin, mvir_prog, key, bh_switch, coldgas, hotgas, blowout,
-                mstar, min_star_cut_id, stardata):
+                mstar, stardata):
 
     z_current = zlookup.zreturn(snapshot)
 
 #---# case empty
     if key == 0 :
 
+        if stardata != 0:
         # LW to be computed here
         # Way it is done now is to lookback one snapshot, then find galaxies with stars in them, track them to rhe start
         # and make arrays of star mass and ages for that 'one' position at the last snapshot. Thus you create an SED
         # accordingly and then compute ht ekde/kdi/Jlw
 
-        gal_mass, gal_age, pos_gal  = makelw.lwgal(snapshot, stardata)
-        kde , kdi , jlw = lwlib.sedcompute(gal_mass,gal_age,pos_gal)
+            gal_mass, gal_age, pos_gal  = makelw.lwgal(snapshot, stardata)
+            kde , kdi , jlw = lwlib.sedcompute(gal_mass,gal_age,pos_gal)
 
-        jlw_global = lwlib.lwglobal(z_current)
-        # Global J is computed as a fit
+            jlw_global = lwlib.lwglobal(z_current)
+            # Global J is computed as a fit
 
-        total_lw = jlw + jlw_global
+            total_lw = jlw + jlw_global
 
-        #step2: Pop III or no Pop III
-        make_PopIII = popiii.checkpopiii_lw(mvir, total_lw)
+            #step2: Pop III or no Pop III
+            make_PopIII = popiii.checkpopiii_lw(mvir, total_lw)
 
-        #step3: pass final output
-        if make_PopIII == 'yes':
-            smass_iii = popiii.makepopiii()
-            # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
-            key_update = 3
+            #step3: pass final output
+            if make_PopIII == 'yes':
+                smass_iii = popiii.makepopiii(niii)
+                # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
+                key_update = 3
 
+        if stardata =0:
+            smass_iii = popiii.makepopiii(niii)
 
 #---# case DCBH
     elif key == 1 :
@@ -62,14 +68,14 @@ def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvi
 #---# case Pop II stars already exist
     # here is where the prog_info comes in handy
 
-    elif star_key == 2 :
+    elif key == 2 :
         popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
 
 #---# case Pop III formed here at some point , make Pop II now
-    elif star_key == 3 :
+    elif key == 3 :
         popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
 
 
-
+    #Add the writing part here to the output file
