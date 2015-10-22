@@ -5,6 +5,7 @@ import sam_analysis_simple as sa
 import numpy as np
 import pandas as pd
 import zlookup as zl
+import haloutils as htils
 import lwmodule as lwm
 
 # ---define constants etc.---
@@ -19,14 +20,12 @@ input_cat_file_prefix = "snaspshot_"
 output_cat_path = "/bigbang/data/bagarwal/halocatalogues/output/"
 output_cat_file_prefix = "snaspshot_out_"
 
-
 #----reading in the stardata-----
 star_file_name = "/bigbang/data/bagarwal/starcats/globalstarcat"
 star_cols = ['snapshot', 'mstar' , 'posx','posy','posz', 'type', 'tform', 'tdeath']
 
 min_snap = 3
 max_snap = 97
-
 
 input_cols = ['snapshot', 'tree_id', 'id', 'pid', 'origid', 'desc_id', 'scale', 'phantom', 'mvir', 'rvir', 'rs', 'vrms',
               'mmp', 'scale_of_last_MM', 'vmax', 'posx', 'posy', 'posz', 'spin']
@@ -35,11 +34,10 @@ output_cols = ['snapshot','tree_id', 'id', 'pid', 'origid', 'desc_id', 'scale', 
                'mmp','scale_of_last_MM','vmax','posx', 'posy', 'posz', 'spin', 'key', 'bh_switch', 'Jiii', 'Jii', 'Jbg',
                'coldgas', 'hotgas', 'blowout', 'mstar']
 
-
 # ---- inital output for min_snap -----
 first_in = input_cat_path + input_cat_file_prefix + min_snap
-first_data = pd.read_csv(input_file_name, delim_whitespace=True, names=input_cols)
-fields_from_output = [0., 0., 0., 0., 0., 0., 0.]
+first_data = pd.read_csv(first_in, delim_whitespace=True, names=input_cols)
+ffo = [0., 0., 0., 0., 0., 0., 0.]
 
 for ini_index, halo_first in first_data.iterrows():
 
@@ -71,12 +69,12 @@ for snapi in np.arange(min_snap + 1, max_snap):
         # you need to add these halo fields and pass them to the main_worker, as all these matched haloes
         # from previous redshifts descend into this current guy
         if match_id.size != 0:
-            fields_from_output = [sum(output_cat_data['mvir'][match_id]),max(output_cat_data['key'][match_id]),
+            ffo = [sum(output_cat_data['mvir'][match_id]),max(output_cat_data['key'][match_id]),
                                   max(output_cat_data['bh_switch'][match_id]),sum(output_cat_data['coldgas'][match_id]),
                                   sum(output_cat_data['hotgas'][match_id]),sum(output_cat_data['blowout'][match_id]),
                                   sum(output_cat_data['mstar'][match_id])]
         else:
-            fields_from_output = [0., 0., 0., 0., 0., 0., 0.]
+            ffo = [0., 0., 0., 0., 0., 0., 0.]
 
         # make the redshift cut in the star catalogue
         # needs to be done once per snapshot
@@ -89,5 +87,5 @@ for snapi in np.arange(min_snap + 1, max_snap):
         # catalogue there and only consider the star_data from the [min:*]
         # haloi_analysed = sa.main_worker(haloi, fields_from_output, star_ids_cut[0])
 
-        haloi_analysed = sa.mainworker(haloi,fields_from_output, stardata)
+        haloi_analysed = sa.mainworker(haloi,ffo, stardata)
         #>>> PRINT this analysed halo into the file
