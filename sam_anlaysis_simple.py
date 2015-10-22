@@ -49,6 +49,7 @@ def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvi
         #step3: pass final output
         if make_PopIII == 'yes':
             smass_iii = popiii.makepopiii()
+            # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
             key_update = 3
 
 
@@ -60,36 +61,15 @@ def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvi
 
 #---# case Pop II stars already exist
     # here is where the prog_info comes in handy
+
     elif star_key == 2 :
         popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
+        # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
 
 #---# case Pop III formed here at some point , make Pop II now
     elif star_key == 3 :
         popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
-
-def popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
-
-#make the timesteps
-
-    nsteps = 50.
-    timestep_mini = np.array(range(nsteps))*(t_current - t_prev)/nsteps + t_prev
-
-#initialise some variables to return here
-    coldgas_now = 0.
-    hotgas_now = mvir*bac.fb
-    mstar_now = 0.
-    blowout_now = 0.
-    macc_now = 0.
-
-#check the DM mass difference for Macc
-    delta_mdm = mvir - mvir_prog
-    if delta_mdm > 0:
-
-        for ti in range(0,nsteps):
-            mstar_now += (hotgas_now/tdyn*timestep_mini[ti])
-
-    return "return your output fields here"
-    #coldgas, hotgas, blowout, mstar
+        # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
 
 
 

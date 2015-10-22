@@ -24,11 +24,14 @@ def checkpopiii_lw(mass,LW):
 
 def makepopiii(num):
     """
-    code to generate Pop III stars given a salpeter IMF: 50-500
+    code to generate Pop III stars randomly between 100-1000 solar masses
 
     :param num: number of stars to be made
     :return: array of size num, with the masses of stars generated
     """
-    star_masses = np.zeros(num)
+
+    min_iii = 100
+    max_iii = 1000
+    star_masses = np.array(np.random.random(num)*(max_iii-min_iii) + min_iii)
 
     return star_masses

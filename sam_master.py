@@ -19,8 +19,15 @@ input_cat_file_prefix = "snaspshot_"
 output_cat_path = "/bigbang/data/bagarwal/halocatalogues/output/"
 output_cat_file_prefix = "snaspshot_out_"
 
+
+#----reading in the stardata-----
+star_file_name = "/bigbang/data/bagarwal/starcats/globalstarcat"
+star_cols = ['snapshot', 'mstar' , 'posx','posy','posz', 'type', 'tform', 'tdeath']
+
 min_snap = 3
 max_snap = 97
+
+
 
 input_cols = ['snapshot', 'tree_id', 'id', 'pid', 'origid', 'desc_id', 'scale', 'phantom', 'mvir', 'rvir', 'rs', 'vrms',
               'mmp', 'scale_of_last_MM', 'vmax', 'posx', 'posy', 'posz', 'spin']
@@ -39,7 +46,7 @@ for snapi in np.arange(min_snap, max_snap):
     output_cat_file_name = output_cat_path + output_cat_file_prefix + snapi_prev
     output_cat_data = pd.read_csv(output_cat_file_name, delim_whitespace=True, names=output_cols)
 
-    stardata = pd.reac_csv()
+    stardata = pd.read_csv(star_file_name, delim_whitespace=True, names=star_cols)
 
     z_current = zl.zreturn(snapi)
 
@@ -69,4 +76,5 @@ for snapi in np.arange(min_snap, max_snap):
         # catalogue there and only consider the star_data from the [min:*]
         # haloi_analysed = sa.main_worker(haloi, fields_from_output, star_ids_cut[0])
 
+        haloi_analysed = sa.mainworker(haloi+fields_from_output, stardata)
         #>>> PRINT this analysed halo into the file

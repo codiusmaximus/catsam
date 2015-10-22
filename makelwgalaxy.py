@@ -25,7 +25,7 @@ def lwgal(snapnow, stardata):
     stardata_prev_gal = stardata[prev_gal]
 
     M_gal = [np.array([i]) for i in np.array([stardata_galaxies['mstar']])]
-    age_gal = [np.array([j]) for j in np.array([stardata_galaxies['agestar']])]
+    age_gal = [np.array([j]) for j in np.array([stardata_galaxies['agestar']])] # agestar needs to be defined wrt t_form
     pos_gal = [np.array([k]) for k in np.array([stardata_galaxies['postion']])]
     # correct this later to xpos,ypos,zpos
 
