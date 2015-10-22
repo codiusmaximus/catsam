@@ -21,11 +21,6 @@ import lwlib
 import zlookup
 import popiiimodule as popiii
 
-<<<<<<< HEAD
-#def main_worker(snapshot, tree_id, id, pid, origid, desc_id, scale, phantom, mvir, rvir, rs, vrms, mmp,
-#                scale_of_last_MM, vmax, posx, posy, posz, spin, mvir_prog, key, bh_switch, coldgas, hotgas, blowout,
-#                mstar, min_star_cut_id, stardata):
-=======
 #number of popiii stars populated in minihaloes
 niii = 1
 

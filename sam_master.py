@@ -38,7 +38,7 @@ output_cols = ['snapshot','tree_id', 'id', 'pid', 'origid', 'desc_id', 'scale', 
 # ---- inital output for min_snap -----
 first_in = input_cat_path + input_cat_file_prefix + str(min_snap)
 first_data = pd.read_csv(first_in, delim_whitespace=True, names=input_cols)
-#ffo = [0., 0., 0., 0., 0., 0., 0.]
+
 ffo = {'key':0, 'bh_switch':0, 'Jiii':0, 'Jii':0, 'Jbg':0,'coldgas':0, 'hotgas':0, 'blowout':0, 'mstar':0}
 
 for ini_index, halo_first in first_data.iterrows():
