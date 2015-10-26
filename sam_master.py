@@ -58,7 +58,7 @@ ffo = {key:0. for key in fof_cols}
 
 for ini_index, halo_first in first_data.iterrows():
 
-    o_key , o_bh_swtich, o_coldgas, o_hotgas, o_blowout, o_mstar = sa.main_worker(halo_first,ffo,0.,min_snap,min_snap)
+    o_key , o_bh_swtich, o_coldgas, o_hotgas, o_blowout, o_mstar = sa.main_worker_ini(halo_first,ffo,min_snap,min_snap)
 
     first_out_filename = output_cat_path + output_cat_file_prefix + str(min_snap)
 

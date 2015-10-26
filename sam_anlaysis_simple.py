@@ -30,6 +30,21 @@ niii = 1
 #initialise the bh_switch
 bh_switch = 0
 
+#this gets called only once at the start for initialising the star catalogue
+def main_worker_ini(haloi,ffo,snapshot,min_snap):
+
+    total_lw = 0.
+    make_PopIII = popiii.checkpopiii_lw(mvir, total_lw)
+
+    #step3: pass final output
+    if make_PopIII == 'yes':
+        smass_iii = popiii.makepopiii(niii)
+        mstar = smass_iii
+
+    # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
+        print "MADE IT"
+        key_update = 3
+
 def main_worker(haloi,ffo, stardata,snapshot,min_snap):
     hpath = "/bigbang/data/AnnaGroup/caterpillar/halos/middle_mass_halos/H1387186/H1387186_EB_Z127_P7_LN7_LX14_O4_NV4/"
     z_current = htils.get_z_snap(hpath,snapshot)[0]
@@ -62,12 +77,6 @@ def main_worker(haloi,ffo, stardata,snapshot,min_snap):
 
                 print "MADE IT"
                 key_update = 3
-
-        if stardata == 0:
-            smass_iii = popiii.makepopiii(niii)
-            key_update = 3
-            mstar = smass_iii
-            print smass_iii
 
 #---# case DCBH
     elif ffo['key'] == 1 :
