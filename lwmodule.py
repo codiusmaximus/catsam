@@ -80,7 +80,7 @@ def lwmodule_master(z_current, t_current, r_arr, box_l, t_contrib, t_form, z_for
 
             j_buffer = l_lw / (dist_arr_comov[ri] * bac.parsec * bac.mtocm * (1 + z_form) / (1 + z_current) ** 2) ** 2
 
-        """ADD A LINE HERE FOR THE LOOKUP TABLE"""
+        #"""ADD A LINE HERE FOR THE LOOKUP TABLE"""
 
             k_de += bac.kappa_de * alpha[ri] * j_buffer
             k_di += bac.kappa_de * beta[ri] * j_buffer
