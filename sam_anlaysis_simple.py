@@ -31,7 +31,7 @@ niii = 1
 bh_switch = 0
 
 #this gets called only once at the start for initialising the star catalogue
-def main_worker_ini(haloi,ffo, stardata,snapshot,min_snap):
+def main_worker_ini(haloi,ffo, stardata,min_snap):
 
     total_lw = 0.
     make_PopIII = popiii.checkpopiii_lw(haloi['mvir'], total_lw)
