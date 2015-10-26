@@ -31,19 +31,20 @@ niii = 1
 bh_switch = 0
 
 #this gets called only once at the start for initialising the star catalogue
-def main_worker_ini(haloi,ffo,snapshot,min_snap):
+def main_worker_ini(haloi,ffo, stardata,snapshot,min_snap):
 
     total_lw = 0.
-    make_PopIII = popiii.checkpopiii_lw(mvir, total_lw)
+    make_PopIII = popiii.checkpopiii_lw(haloi['mvir'], total_lw)
 
     #step3: pass final output
     if make_PopIII == 'yes':
         smass_iii = popiii.makepopiii(niii)
-        mstar = smass_iii
+        stardata['mstar'].append(smass_iii)
 
     # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
         print "MADE IT"
-        key_update = 3
+        haloi['key'] = 3
+
 
 def main_worker(haloi,ffo, stardata,snapshot,min_snap):
     hpath = "/bigbang/data/AnnaGroup/caterpillar/halos/middle_mass_halos/H1387186/H1387186_EB_Z127_P7_LN7_LX14_O4_NV4/"
