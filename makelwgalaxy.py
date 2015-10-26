@@ -14,11 +14,13 @@ import ba_constants as bac
 
 def lwgal(snapnow, stardata):
 
-    minsnap =bac.minsnap
+    minsnap = bac.minsnap
 
     # galaxies at the prev snapshot that will be passed to the lw module, with the pos at the prev snapshot
-    galaxies = np.array(np.where((stardata['snapshot'] == snapnow - 1)))
+    galaxies = (np.array(stardata['snapshot']) == snapnow - 1)
+    print galaxies
     stardata_galaxies = stardata[galaxies]
+    print stardata_galaxies
 
     # all stars that formed before snapnow-1 to be connected to 'galaxies'
     prev_gal = np.array(np.where((stardata['snapshot'] < snapnow - 1)))

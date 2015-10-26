@@ -16,10 +16,13 @@ depending on the key, the actual sub-method gets called
 """
 
 # import
+import numpy as np
 import makelwgalaxy as makelw
 import lwlib
 import zlookup
 import popiiimodule as popiii
+import popiimodule as popii
+import haloutils as htils
 
 #number of popiii stars populated in minihaloes
 niii = 1
@@ -27,12 +30,14 @@ niii = 1
 #initialise the bh_switch
 bh_switch = 0
 
-def main_worker(haloi,ffo, stardata,snapshot):
+def main_worker(haloi,ffo, stardata,snapshot,min_snap):
+    hpath = "/bigbang/data/AnnaGroup/caterpillar/halos/middle_mass_halos/H1387186/H1387186_EB_Z127_P7_LN7_LX14_O4_NV4/"
     z_current = htils.get_z_snap(hpath,snapshot)[0]
+    #print "Current redshift",z_current
 #---# case empty
     if ffo['key'] == 0 :
 
-        if stardata != 0:
+        if snapshot != min_snap:
         # LW to be computed here
         # Way it is done now is to lookback one snapshot, then find galaxies with stars in them, track them to rhe start
         # and make arrays of star mass and ages for that 'one' position at the last snapshot. Thus you create an SED
@@ -54,32 +59,37 @@ def main_worker(haloi,ffo, stardata,snapshot):
                 smass_iii = popiii.makepopiii(niii)
                 mstar = smass_iii
                 # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
+
+                print "MADE IT"
                 key_update = 3
 
-        if stardata =0:
+        if stardata == 0:
             smass_iii = popiii.makepopiii(niii)
             key_update = 3
             mstar = smass_iii
+            print smass_iii
 
 #---# case DCBH
     elif ffo['key'] == 1 :
 
         #do nothing here
-        bh_switch = 1
+        ffo['bh_switch'] = 1
 
 #---# case Pop II stars already exist
     # here is where the prog_info comes in handy
 
     elif ffo['key'] == 2 :
-        popii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
+        popii.makepopii(haloi['snapshot'],haloi['mvir'],haloi['vmax'],haloi['rvir'],ffo['mvir_prog'],ffo['coldgas'],ffo['hotgas'],ffo['blowout'],ffo['mstar'])
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
-        key_update = 2
-
+        ffo['key'] = 2
 #---# case Pop III formed here at some point , make Pop II now
     elif ffo['key'] == 3 :
-        popiii_makestars(snapshot,mvir,vmax,rvir,mvir_prog,coldgas,hotgas,blowout,mstar)
+        popiii.makepopiii(haloi['snapshot'],haloi['mvir'],haloi['vmax'],haloi['rvir'],ffo['mvir_prog'],ffo['coldgas'],ffo['hotgas'],ffo['blowout'],ffo['mstar'])
         # NEED TO PRINT THIS TO A FILE: GLOBALSTARCAT
-        key_update = 2
+        ffo['key'] = 2
+
+    if ffo['key'] != 1:
+        ffo['bh_switch'] = 0
 
     #return the output fields
-    return key_update, bh_switch, coldgas, hotgas, blowout, mstar
+    return ffo['key'], ffo['bh_switch'], ffo['coldgas'], ffo['hotgas'], ffo['blowout'], ffo['mstar']
