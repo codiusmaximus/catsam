@@ -16,7 +16,7 @@ def checkpopiii_lw(mass,LW):
 
     #Machachek et al 2001 * 4 (as reported by Oshea and Norman 08)
     mass_req = 1.25e5 + 8.7e5*(4*3.14*LW)**0.47
-    if mass_req <= mass
+    if mass_req <= mass:
         make_popiii = "yes"
     else:
         make_popiii = "no"
